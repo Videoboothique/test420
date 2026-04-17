@@ -10,18 +10,94 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      font-family: Arial, sans-serif;
-      color: white;
-      background: linear-gradient(135deg, #3b82f6, #9333ea, #f97316);
+      padding: 2rem;
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.3), transparent 35%),
+        linear-gradient(135deg, #0f172a, #1d4ed8, #ec4899, #f59e0b);
     }
 
     h1 {
-      font-size: 4rem;
-      text-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.08em;
+      margin: 0;
+      font-size: clamp(2.4rem, 9vw, 6rem);
+      text-align: center;
+      text-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .letter {
+      display: inline-block;
+      font-weight: 900;
+      animation: dance 1s ease-in-out infinite;
+    }
+
+    .space {
+      width: 0.45em;
+    }
+
+    .letter:nth-child(1) { color: #ff4d4d; animation-delay: 0s; }
+    .letter:nth-child(2) { color: #ff8a00; animation-delay: 0.08s; }
+    .letter:nth-child(3) { color: #ffd93d; animation-delay: 0.16s; }
+    .letter:nth-child(4) { color: #6bff95; animation-delay: 0.24s; }
+    .letter:nth-child(5) { color: #39c5ff; animation-delay: 0.32s; }
+    .letter:nth-child(6) { color: #7b61ff; animation-delay: 0.4s; }
+    .letter:nth-child(7) { color: #ff66c4; animation-delay: 0.48s; }
+    .letter:nth-child(8) { color: #ff4d4d; animation-delay: 0.56s; }
+    .letter:nth-child(9) { color: #ff8a00; animation-delay: 0.64s; }
+    .letter:nth-child(10) { color: #ffd93d; animation-delay: 0.72s; }
+    .letter:nth-child(11) { color: #6bff95; animation-delay: 0.8s; }
+    .letter:nth-child(12) { color: #39c5ff; animation-delay: 0.88s; }
+    .letter:nth-child(13) { color: #7b61ff; animation-delay: 0.96s; }
+    .letter:nth-child(14) { color: #ff66c4; animation-delay: 1.04s; }
+    .letter:nth-child(15) { color: #ff4d4d; animation-delay: 1.12s; }
+    .letter:nth-child(16) { color: #ff8a00; animation-delay: 1.2s; }
+    .letter:nth-child(17) { color: #ffd93d; animation-delay: 1.28s; }
+    .letter:nth-child(18) { color: #6bff95; animation-delay: 1.36s; }
+    .letter:nth-child(19) { color: #39c5ff; animation-delay: 1.44s; }
+    .letter:nth-child(20) { color: #7b61ff; animation-delay: 1.52s; }
+    .letter:nth-child(21) { color: #ff66c4; animation-delay: 1.6s; }
+    .letter:nth-child(22) { color: #ff4d4d; animation-delay: 1.68s; }
+    .letter:nth-child(23) { color: #ff8a00; animation-delay: 1.76s; }
+
+    @keyframes dance {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      25% {
+        transform: translateY(-16px) rotate(-8deg) scale(1.08);
+      }
+      50% {
+        transform: translateY(8px) rotate(8deg) scale(0.96);
+      }
+      75% {
+        transform: translateY(-10px) rotate(-4deg) scale(1.04);
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Hello</h1>
+  <h1 aria-label="Geef nooit korting">
+    <span class="letter">G</span>
+    <span class="letter">e</span>
+    <span class="letter">e</span>
+    <span class="letter">f</span>
+    <span class="letter space" aria-hidden="true"></span>
+    <span class="letter">n</span>
+    <span class="letter">o</span>
+    <span class="letter">o</span>
+    <span class="letter">i</span>
+    <span class="letter">t</span>
+    <span class="letter space" aria-hidden="true"></span>
+    <span class="letter">k</span>
+    <span class="letter">o</span>
+    <span class="letter">r</span>
+    <span class="letter">t</span>
+    <span class="letter">i</span>
+    <span class="letter">n</span>
+    <span class="letter">g</span>
+  </h1>
 </body>
 </html>
