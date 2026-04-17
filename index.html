@@ -197,7 +197,7 @@
 
     <section class="game-card" aria-labelledby="game-title">
       <h2 id="game-title">Boter, kaas en eieren</h2>
-      <p>Klik om om de beurt `X` en `O` te zetten.</p>
+      <p>Jij speelt als X. De bot speelt automatisch als O.</p>
       <div class="status" id="status">Speler X is aan de beurt</div>
       <div class="board" id="board">
         <button class="cell" type="button" data-cell></button>
@@ -229,8 +229,8 @@
       [2, 4, 6]
     ];
 
-    let currentPlayer = "X";
     let gameActive = true;
+    let botThinking = false;
 
     function updateStatus(message) {
       statusText.textContent = message;
@@ -246,43 +246,126 @@
       });
     }
 
-    function handleCellClick(event) {
-      const cell = event.currentTarget;
+    function finishGame(message, winnerLine) {
+      gameActive = false;
+      botThinking = false;
+      updateStatus(message);
 
-      if (!gameActive || cell.textContent) {
-        return;
+      if (winnerLine) {
+        winnerLine.forEach((index) => {
+          cells[index].style.outline = "4px solid rgba(255, 255, 255, 0.9)";
+        });
       }
+    }
 
-      cell.textContent = currentPlayer;
+    function getEmptyCells() {
+      return [...cells].filter((cell) => !cell.textContent);
+    }
+
+    function placeMove(cell, player) {
+      cell.textContent = player;
       cell.disabled = true;
-      cell.classList.add(currentPlayer.toLowerCase());
+      cell.classList.add(player.toLowerCase());
 
       const winnerLine = checkWinner();
       const isDraw = [...cells].every((boardCell) => boardCell.textContent);
 
       if (winnerLine) {
-        gameActive = false;
-        updateStatus("Speler " + currentPlayer + " wint!");
-        winnerLine.forEach((index) => {
-          cells[index].style.outline = "4px solid rgba(255, 255, 255, 0.9)";
-        });
-        return;
+        finishGame((player === "X" ? "Jij" : "De bot") + " wint!", winnerLine);
+        return true;
       }
 
       if (isDraw) {
-        gameActive = false;
-        updateStatus("Gelijkspel, probeer nog een keer.");
+        finishGame("Gelijkspel, probeer nog een keer.");
+        return true;
+      }
+
+      return false;
+    }
+
+    function chooseBotMove() {
+      const emptyCells = getEmptyCells();
+
+      if (!emptyCells.length) {
+        return null;
+      }
+
+      const preferredIndexes = [4, 0, 2, 6, 8, 1, 3, 5, 7];
+
+      for (const line of winningLines) {
+        const lineCells = line.map((index) => cells[index].textContent);
+        const botCount = lineCells.filter((value) => value === "O").length;
+        const emptyIndex = line.find((index) => !cells[index].textContent);
+
+        if (botCount === 2 && emptyIndex !== undefined) {
+          return cells[emptyIndex];
+        }
+      }
+
+      for (const line of winningLines) {
+        const lineCells = line.map((index) => cells[index].textContent);
+        const playerCount = lineCells.filter((value) => value === "X").length;
+        const emptyIndex = line.find((index) => !cells[index].textContent);
+
+        if (playerCount === 2 && emptyIndex !== undefined) {
+          return cells[emptyIndex];
+        }
+      }
+
+      return preferredIndexes
+        .map((index) => cells[index])
+        .find((cell) => cell && !cell.textContent);
+    }
+
+    function runBotTurn() {
+      if (!gameActive) {
         return;
       }
 
-      currentPlayer = currentPlayer === "X" ? "O" : "X";
-      updateStatus("Speler " + currentPlayer + " is aan de beurt");
+      botThinking = true;
+      updateStatus("De bot denkt na...");
+
+      window.setTimeout(() => {
+        if (!gameActive) {
+          return;
+        }
+
+        const botCell = chooseBotMove();
+
+        if (!botCell) {
+          finishGame("Gelijkspel, probeer nog een keer.");
+          return;
+        }
+
+        const finished = placeMove(botCell, "O");
+
+        if (!finished) {
+          botThinking = false;
+          updateStatus("Jij bent aan de beurt");
+        }
+      }, 450);
+    }
+
+    function handleCellClick(event) {
+      const cell = event.currentTarget;
+
+      if (!gameActive || botThinking || cell.textContent) {
+        return;
+      }
+
+      const finished = placeMove(cell, "X");
+
+      if (finished) {
+        return;
+      }
+
+      runBotTurn();
     }
 
     function resetGame() {
-      currentPlayer = "X";
       gameActive = true;
-      updateStatus("Speler X is aan de beurt");
+      botThinking = false;
+      updateStatus("Jij bent aan de beurt");
 
       cells.forEach((cell) => {
         cell.textContent = "";
@@ -297,6 +380,7 @@
     });
 
     resetButton.addEventListener("click", resetGame);
+    resetGame();
   </script>
 </body>
 </html>
