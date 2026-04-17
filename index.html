@@ -8,8 +8,6 @@
     body {
       margin: 0;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
       padding: 2rem;
       font-family: "Trebuchet MS", Arial, sans-serif;
       background:
@@ -26,6 +24,14 @@
       font-size: clamp(2.4rem, 9vw, 6rem);
       text-align: center;
       text-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    main {
+      width: min(100%, 960px);
+      margin: 0 auto;
+      display: grid;
+      justify-items: center;
+      gap: 2rem;
     }
 
     .letter {
@@ -62,6 +68,94 @@
     .letter:nth-child(22) { color: #ff4d4d; animation-delay: 1.68s; }
     .letter:nth-child(23) { color: #ff8a00; animation-delay: 1.76s; }
 
+    .game-card {
+      width: min(100%, 420px);
+      padding: 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.28);
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.45);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(12px);
+    }
+
+    .game-card h2 {
+      margin: 0 0 0.4rem;
+      text-align: center;
+      font-size: 1.8rem;
+      color: #fff7ed;
+    }
+
+    .game-card p {
+      margin: 0 0 1rem;
+      text-align: center;
+      color: #e0f2fe;
+    }
+
+    .status {
+      min-height: 1.6em;
+      margin-bottom: 1rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fef3c7;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.7rem;
+    }
+
+    .cell {
+      aspect-ratio: 1;
+      border: 0;
+      border-radius: 18px;
+      font-size: clamp(2rem, 10vw, 3.2rem);
+      font-weight: 900;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.08));
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .cell:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.24);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.12));
+    }
+
+    .cell:disabled {
+      cursor: default;
+      opacity: 0.95;
+    }
+
+    .cell.x {
+      color: #fde047;
+    }
+
+    .cell.o {
+      color: #86efac;
+    }
+
+    .reset-button {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border: 0;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+      background: linear-gradient(90deg, #facc15, #fb7185, #38bdf8);
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    .reset-button:hover {
+      transform: translateY(-1px);
+      filter: saturate(1.1);
+    }
+
     @keyframes dance {
       0%, 100% {
         transform: translateY(0) rotate(0deg) scale(1);
@@ -79,25 +173,130 @@
   </style>
 </head>
 <body>
-  <h1 aria-label="Geef nooit korting">
-    <span class="letter">G</span>
-    <span class="letter">e</span>
-    <span class="letter">e</span>
-    <span class="letter">f</span>
-    <span class="letter space" aria-hidden="true"></span>
-    <span class="letter">n</span>
-    <span class="letter">o</span>
-    <span class="letter">o</span>
-    <span class="letter">i</span>
-    <span class="letter">t</span>
-    <span class="letter space" aria-hidden="true"></span>
-    <span class="letter">k</span>
-    <span class="letter">o</span>
-    <span class="letter">r</span>
-    <span class="letter">t</span>
-    <span class="letter">i</span>
-    <span class="letter">n</span>
-    <span class="letter">g</span>
-  </h1>
+  <main>
+    <h1 aria-label="Geef nooit korting">
+      <span class="letter">G</span>
+      <span class="letter">e</span>
+      <span class="letter">e</span>
+      <span class="letter">f</span>
+      <span class="letter space" aria-hidden="true"></span>
+      <span class="letter">n</span>
+      <span class="letter">o</span>
+      <span class="letter">o</span>
+      <span class="letter">i</span>
+      <span class="letter">t</span>
+      <span class="letter space" aria-hidden="true"></span>
+      <span class="letter">k</span>
+      <span class="letter">o</span>
+      <span class="letter">r</span>
+      <span class="letter">t</span>
+      <span class="letter">i</span>
+      <span class="letter">n</span>
+      <span class="letter">g</span>
+    </h1>
+
+    <section class="game-card" aria-labelledby="game-title">
+      <h2 id="game-title">Boter, kaas en eieren</h2>
+      <p>Klik om om de beurt `X` en `O` te zetten.</p>
+      <div class="status" id="status">Speler X is aan de beurt</div>
+      <div class="board" id="board">
+        <button class="cell" type="button" data-cell></button>
+        <button class="cell" type="button" data-cell></button>
+        <button class="cell" type="button" data-cell></button>
+        <button class="cell" type="button" data-cell></button>
+        <button class="cell" type="button" data-cell></button>
+        <button class="cell" type="button" data-cell></button>
+        <button class="cell" type="button" data-cell></button>
+        <button class="cell" type="button" data-cell></button>
+        <button class="cell" type="button" data-cell></button>
+      </div>
+      <button class="reset-button" id="reset-button" type="button">Opnieuw spelen</button>
+    </section>
+  </main>
+
+  <script>
+    const cells = document.querySelectorAll("[data-cell]");
+    const statusText = document.getElementById("status");
+    const resetButton = document.getElementById("reset-button");
+    const winningLines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    let currentPlayer = "X";
+    let gameActive = true;
+
+    function updateStatus(message) {
+      statusText.textContent = message;
+    }
+
+    function checkWinner() {
+      return winningLines.find(([a, b, c]) => {
+        return (
+          cells[a].textContent &&
+          cells[a].textContent === cells[b].textContent &&
+          cells[a].textContent === cells[c].textContent
+        );
+      });
+    }
+
+    function handleCellClick(event) {
+      const cell = event.currentTarget;
+
+      if (!gameActive || cell.textContent) {
+        return;
+      }
+
+      cell.textContent = currentPlayer;
+      cell.disabled = true;
+      cell.classList.add(currentPlayer.toLowerCase());
+
+      const winnerLine = checkWinner();
+      const isDraw = [...cells].every((boardCell) => boardCell.textContent);
+
+      if (winnerLine) {
+        gameActive = false;
+        updateStatus("Speler " + currentPlayer + " wint!");
+        winnerLine.forEach((index) => {
+          cells[index].style.outline = "4px solid rgba(255, 255, 255, 0.9)";
+        });
+        return;
+      }
+
+      if (isDraw) {
+        gameActive = false;
+        updateStatus("Gelijkspel, probeer nog een keer.");
+        return;
+      }
+
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      updateStatus("Speler " + currentPlayer + " is aan de beurt");
+    }
+
+    function resetGame() {
+      currentPlayer = "X";
+      gameActive = true;
+      updateStatus("Speler X is aan de beurt");
+
+      cells.forEach((cell) => {
+        cell.textContent = "";
+        cell.disabled = false;
+        cell.classList.remove("x", "o");
+        cell.style.outline = "";
+      });
+    }
+
+    cells.forEach((cell) => {
+      cell.addEventListener("click", handleCellClick);
+    });
+
+    resetButton.addEventListener("click", resetGame);
+  </script>
 </body>
 </html>
